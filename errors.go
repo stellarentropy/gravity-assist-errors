@@ -2,12 +2,13 @@ package errors
 
 import (
 	errs "errors"
+	"fmt"
 )
 
 // New creates a new error with the specified message and returns an [error]. If
 // the message is empty, the returned error will have an empty message string.
-func New(msg string) error {
-	return errs.New(msg)
+func New(msg string, args ...interface{}) error {
+	return errs.New(fmt.Sprintf(msg, args...))
 }
 
 // Wrap consolidates a sequence of [error]s into a single [error], streamlining
