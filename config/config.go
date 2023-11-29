@@ -8,9 +8,9 @@ import (
 	"strconv"
 	"time"
 
-	"gravity-assist/utils"
+	"github.com/stellarentropy/gravity-assist-common/utils"
 
-	"github.com/stellarentropy/gravity-assist-errors"
+	"github.com/stellarentropy/gravity-assist-common/errors"
 )
 
 // Env manages and validates environment variables for an application, providing
