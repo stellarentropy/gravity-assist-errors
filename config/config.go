@@ -290,7 +290,7 @@ func (e Env) WithRequired() Env {
 // is not empty, it raises an error to signal an invalid value. This method
 // facilitates fluent configuration by returning the same [Env] instance for
 // potential additional configurations.
-func (e Env) WithOptions(opts []string) Env {
+func (e Env) WithOptions(opts ...string) Env {
 	if e.value == "" {
 		return e
 	}
