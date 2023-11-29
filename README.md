@@ -1,2 +1,2 @@
-# gravity-assist-errors
-Error definitions for Gravity Assist
+# gravity-assist-common
+Common utils for Gravity Assist
