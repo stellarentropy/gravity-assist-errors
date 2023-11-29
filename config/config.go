@@ -5,6 +5,7 @@ import (
 	"net"
 	"net/url"
 	"os"
+	"path/filepath"
 	"strconv"
 	"time"
 
@@ -120,16 +121,12 @@ func (e Env) GetInt() int {
 	return i
 }
 
-// GetPathOrCreate retrieves the file path specified by the environment variable
-// for this [Env] instance, creating the directory at that path if it does not
-// exist. It returns an empty string if the environment variable is unset or
-// empty. If any error occurs during directory creation, it triggers a panic.
-func (e Env) GetPathOrCreate() string {
+func (e Env) GetDirectoryOrCreate() string {
 	if e.value == "" {
 		return e.value
 	}
 
-	if !utils.IsFile(e.value) {
+	if !utils.IsDirectory(e.value) {
 		if err := os.MkdirAll(e.value, 0755); err != nil {
 			panic(errors.Wrap(
 				errors.ErrInvalidEnv,
@@ -144,12 +141,54 @@ func (e Env) GetPathOrCreate() string {
 	return e.value
 }
 
-// GetPath retrieves the file path specified by the environment variable of the
-// current [Env] instance. If the environment variable is not set or its value
-// is an empty string, an empty string is returned. If the path does not exist
-// or is not a valid file path, a panic is induced with relevant error
-// information.
-func (e Env) GetPath() string {
+func (e Env) GetFileOrCreate() string {
+	if e.value == "" {
+		return e.value
+	}
+
+	if !utils.IsFile(e.value) {
+		if err := os.MkdirAll(filepath.Base(e.value), 0755); err != nil {
+			panic(errors.Wrap(
+				errors.ErrInvalidEnv,
+				errors.ErrInvalidPath,
+				fmt.Errorf("env: %s", e.key),
+				fmt.Errorf("value: %s", e.value),
+				err,
+			))
+		} else {
+			if _, err := os.Create(e.value); err != nil {
+				panic(errors.Wrap(
+					errors.ErrInvalidEnv,
+					errors.ErrInvalidPath,
+					fmt.Errorf("env: %s", e.key),
+					fmt.Errorf("value: %s", e.value),
+					err,
+				))
+			}
+		}
+	}
+
+	return e.value
+}
+
+func (e Env) GetDirectory() string {
+	if e.value == "" {
+		return e.value
+	}
+
+	if !utils.IsDirectory(e.value) {
+		panic(errors.Wrap(
+			errors.ErrInvalidEnv,
+			errors.ErrInvalidPath,
+			fmt.Errorf("env: %s", e.key),
+			fmt.Errorf("value: %s", e.value),
+		))
+	}
+
+	return e.value
+}
+
+func (e Env) GetFile() string {
 	if e.value == "" {
 		return e.value
 	}
