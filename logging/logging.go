@@ -13,7 +13,7 @@ import (
 // logging, ensuring timestamped and formatted output with efficient message
 // processing, including the ability to drop messages under high load to
 // maintain system performance.
-func GetLogger() zerolog.Logger {
+func GetLogger() Logger {
 	// Set the global duration field unit to milliseconds
 	zerolog.DurationFieldUnit = time.Millisecond
 	// Set the global time field format to RFC3339
@@ -40,7 +40,7 @@ func GetLogger() zerolog.Logger {
 	zerolog.SetGlobalLevel(zerolog.InfoLevel)
 
 	// Return the logger
-	return logger
+	return Logger{logger}
 }
 
 // consoleWriter creates and returns a [zerolog.ConsoleWriter] that formats log
