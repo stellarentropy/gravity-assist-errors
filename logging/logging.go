@@ -22,13 +22,24 @@ func GetLogger() Logger {
 	// Declare a variable to hold the multi-level writer
 	var multi zerolog.LevelWriter
 
-	// TODO: add check to log the more efficient raw json format when running in production
+	var wr diode.Writer
 
-	// Create a new diode writer with a buffer size of 1000 and a flush interval of 10 milliseconds
-	wr := diode.NewWriter(consoleWriter(), 1000, 10*time.Millisecond, func(missed int) {
-		// If any messages are dropped, print the number of dropped messages
-		fmt.Printf("Dropped %d messages", missed)
-	})
+	logFormat := os.Getenv("GRAVITY_ASSIST_LOG_FORMAT")
+
+	switch logFormat {
+	case "color", "text":
+		// Create a new diode writer with a buffer size of 1000 and a flush interval of 10 milliseconds
+		wr = diode.NewWriter(consoleWriter(), 1000, 10*time.Millisecond, func(missed int) {
+			// If any messages are dropped, print the number of dropped messages
+			fmt.Printf("Dropped %d messages", missed)
+		})
+	case "json":
+		// Create a new diode writer with a buffer size of 1000 and a flush interval of 10 milliseconds
+		wr = diode.NewWriter(os.Stdout, 1000, 10*time.Millisecond, func(missed int) {
+			// If any messages are dropped, print the number of dropped messages
+			fmt.Printf("Dropped %d messages", missed)
+		})
+	}
 
 	// Assign the diode writer to the multi-level writer
 	multi = zerolog.MultiLevelWriter(wr)
@@ -48,8 +59,16 @@ func GetLogger() Logger {
 // coding, time stamps, caller information, log levels, and message content
 // arranged in a readable tabular format with fixed message width.
 func consoleWriter() zerolog.ConsoleWriter {
+	logFormat := os.Getenv("GRAVITY_ASSIST_LOG_FORMAT")
+
+	var color bool
+
+	if logFormat == "color" {
+		color = true
+	}
+
 	// Create a new console writer that outputs to the standard output
-	writer := zerolog.ConsoleWriter{Out: os.Stdout, TimeFormat: "15:04:05", NoColor: false}
+	writer := zerolog.ConsoleWriter{Out: os.Stdout, TimeFormat: "15:04:05", NoColor: !color}
 
 	// Set the order of the parts in the log message
 	writer.PartsOrder = []string{
