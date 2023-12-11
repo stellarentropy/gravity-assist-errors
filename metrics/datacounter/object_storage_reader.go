@@ -77,14 +77,16 @@ func (counter *ObjectStorageReaderCounter) Read(buf []byte) (int, error) {
 	if n >= 0 {
 		atomic.AddUint64(&counter.count, uint64(n))
 
-		err = tracer.AddInt64(counter.ctx, counter.component, "object_storage.bytes.read", int64(n),
-			metric.AddOption(metric.WithAttributes(
-				attribute.KeyValue{
-					Key:   "gcs.bucket.name",
-					Value: attribute.StringValue(counter.objHandler.BucketName()),
-				},
-			)),
-		)
+		go func() {
+			_ = tracer.AddInt64(counter.ctx, counter.component, "object_storage.bytes.read", int64(n),
+				metric.AddOption(metric.WithAttributes(
+					attribute.KeyValue{
+						Key:   "gcs.bucket.name",
+						Value: attribute.StringValue(counter.objHandler.BucketName()),
+					},
+				)),
+			)
+		}()
 	}
 
 	return n, err

@@ -50,7 +50,9 @@ func (counter *HTTPReaderCounter) Read(buf []byte) (int, error) {
 	// thus `if n >= 0`:
 	if n >= 0 {
 		atomic.AddUint64(&counter.count, uint64(n))
-		err = tracer.AddInt64(counter.ctx, counter.component, "http.server.bytes.read", int64(n))
+		go func() {
+			_ = tracer.AddInt64(counter.ctx, counter.component, "http.server.bytes.read", int64(n))
+		}()
 	}
 
 	return n, err

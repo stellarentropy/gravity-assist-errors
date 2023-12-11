@@ -48,11 +48,9 @@ func (counter *HTTPWriterCounter) Write(buf []byte) (int, error) {
 
 	atomic.AddUint64(&counter.count, uint64(n))
 
-	if err != nil {
-		return n, err
-	}
-
-	err = tracer.AddInt64(counter.ctx, counter.component, "http.server.bytes.written", int64(n))
+	go func() {
+		_ = tracer.AddInt64(counter.ctx, counter.component, "http.server.bytes.written", int64(n))
+	}()
 
 	return n, err
 }
