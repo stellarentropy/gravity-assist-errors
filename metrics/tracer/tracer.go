@@ -60,7 +60,6 @@ func StartTracer(ctx context.Context) (*sdktrace.TracerProvider, error) {
 }
 
 func Start(ctx context.Context, wg *sync.WaitGroup) {
-	wg.Add(1)
 	defer wg.Done()
 
 	tp, err := StartTracer(ctx)
