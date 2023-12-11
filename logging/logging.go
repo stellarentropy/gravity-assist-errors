@@ -7,6 +7,7 @@ import (
 
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/diode"
+	"github.com/stellarentropy/gravity-assist-common/config/common"
 )
 
 // GetLogger returns a preconfigured [zerolog.Logger] for application-wide
@@ -24,7 +25,7 @@ func GetLogger() Logger {
 
 	var wr diode.Writer
 
-	logFormat := os.Getenv("GRAVITY_ASSIST_LOG_FORMAT")
+	logFormat := common_config.Common.LogFormat
 
 	switch logFormat {
 	case "color", "text":
@@ -59,7 +60,7 @@ func GetLogger() Logger {
 // coding, time stamps, caller information, log levels, and message content
 // arranged in a readable tabular format with fixed message width.
 func consoleWriter() zerolog.ConsoleWriter {
-	logFormat := os.Getenv("GRAVITY_ASSIST_LOG_FORMAT")
+	logFormat := common_config.Common.LogFormat
 
 	var color bool
 
