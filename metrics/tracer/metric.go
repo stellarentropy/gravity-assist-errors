@@ -17,7 +17,7 @@ var countersLock = sync.Mutex{}
 
 func NewMetric(ctx context.Context, component string, opts ...metric.MeterOption) metric.Meter {
 	metricsLock.Lock()
-	defer metric.Unlock()
+	defer metricsLock.Unlock()
 
 	if m, ok := metrics[component]; ok {
 		return m
