@@ -41,6 +41,7 @@ func StartTracer(ctx context.Context) (*sdktrace.TracerProvider, error) {
 	}
 
 	tp := sdktrace.NewTracerProvider(
+		sdktrace.WithSampler(sdktrace.AlwaysSample()),
 		sdktrace.WithBatcher(gcpTraceExporter),
 		sdktrace.WithResource(res),
 	)

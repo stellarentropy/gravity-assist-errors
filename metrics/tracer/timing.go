@@ -7,11 +7,13 @@ import (
 	"go.opentelemetry.io/otel/trace"
 )
 
-func NewSpan(ctx context.Context, name string, attributes ...attribute.KeyValue) trace.Span {
+func NewSpan(ctx context.Context, name string, attributes ...attribute.KeyValue) (context.Context, trace.Span) {
 	span := trace.SpanFromContext(ctx)
 	span.SetName(name)
 
 	span.SetAttributes(attributes...)
 
-	return span
+	ctx = trace.ContextWithSpan(ctx, span)
+
+	return ctx, span
 }

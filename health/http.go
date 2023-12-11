@@ -7,9 +7,8 @@ import (
 	"net/http"
 	"sync"
 
-	"github.com/stellarentropy/gravity-assist-common/config/common"
-
 	"github.com/go-chi/chi/v5"
+	"github.com/stellarentropy/gravity-assist-common/config/common"
 	"github.com/stellarentropy/gravity-assist-common/errors"
 	"golang.org/x/net/http2"
 	"golang.org/x/net/http2/h2c"
