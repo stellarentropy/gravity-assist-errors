@@ -25,18 +25,10 @@ func getRouter() *chi.Mux {
 	router := chi.NewRouter()
 
 	router.Get("/healthz", func(w http.ResponseWriter, r *http.Request) {
-		defer tracerNewSpan(r.Context(), "healthz.request").End()
-
-		_ = tracerAddInt64(r.Context(), "healthz.request.count", 1)
-
 		_, _ = w.Write([]byte("OK"))
 	})
 
 	router.Get("/readyz", func(w http.ResponseWriter, r *http.Request) {
-		defer tracerNewSpan(r.Context(), "readyz.request").End()
-
-		_ = tracerAddInt64(r.Context(), "readyz.request.count", 1)
-
 		if ready {
 			_, _ = w.Write([]byte("OK"))
 		} else {
