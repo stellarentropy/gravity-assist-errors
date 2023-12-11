@@ -31,10 +31,10 @@ func NewMetric(ctx context.Context, component string, opts ...metric.MeterOption
 }
 
 func AddInt64(ctx context.Context, component string, name string, value int64, opts ...metric.AddOption) error {
+	m := NewMetric(ctx, component)
+
 	countersLock.Lock()
 	defer countersLock.Unlock()
-
-	m := NewMetric(ctx, component)
 
 	c, ok := counters[name]
 	if !ok {
@@ -49,4 +49,8 @@ func AddInt64(ctx context.Context, component string, name string, value int64, o
 	c.Add(ctx, value, opts...)
 
 	return nil
+}
+
+func MustAddInt64(ctx context.Context, component string, name string, value int64, opts ...metric.AddOption) {
+	_ = AddInt64(ctx, component, name, value, opts...)
 }

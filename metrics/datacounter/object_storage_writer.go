@@ -60,16 +60,14 @@ func (counter *ObjectStorageWriterCounter) Write(buf []byte) (int, error) {
 	if n >= 0 {
 		atomic.AddUint64(&counter.count, uint64(n))
 
-		go func() {
-			_ = tracer.AddInt64(counter.ctx, counter.component, "object_storage.bytes.written", int64(n),
-				metric.AddOption(metric.WithAttributes(
-					attribute.KeyValue{
-						Key:   "gcs.bucket.name",
-						Value: attribute.StringValue(counter.Writer.Bucket),
-					},
-				)),
-			)
-		}()
+		tracer.MustAddInt64(counter.ctx, counter.component, "object_storage.bytes.written", int64(n),
+			metric.AddOption(metric.WithAttributes(
+				attribute.KeyValue{
+					Key:   "gcs.bucket.name",
+					Value: attribute.StringValue(counter.Writer.Bucket),
+				},
+			)),
+		)
 	}
 
 	return n, err

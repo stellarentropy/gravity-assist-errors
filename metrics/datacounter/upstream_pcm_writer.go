@@ -53,9 +53,7 @@ func (counter *UpstreamPCMWriterCounter) Read(buf []byte) (int, error) {
 	if n >= 0 {
 		atomic.AddUint64(&counter.count, uint64(n))
 
-		go func() {
-			_ = tracer.AddInt64(counter.ctx, counter.component, "upstream.pcm.bytes.written", int64(n))
-		}()
+		tracer.MustAddInt64(counter.ctx, counter.component, "upstream.pcm.bytes.written", int64(n))
 	}
 
 	return n, err
