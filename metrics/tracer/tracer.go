@@ -69,7 +69,10 @@ func Start(ctx context.Context, wg *sync.WaitGroup) {
 	}
 
 	defer func() {
-		if err := tp.Shutdown(ctx); err != nil {
+		tctx, cancel := context.WithTimeout(context.Background(), config.Common.GracefulShutdownTimeout)
+		defer cancel()
+
+		if err := tp.Shutdown(tctx); err != nil {
 			logger.Error().Err(err).Msg("error shutting down tracer")
 			panic(err)
 		}
