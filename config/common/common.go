@@ -16,7 +16,11 @@ type CommonConfig struct {
 	ServiceName string
 
 	EnableMetricCollection bool
-	EnableTraceCollection  bool
+	MetricExportInterval   time.Duration
+
+	EnableTraceCollection bool
+	TraceSampler          string
+	TraceIdRatio          float64
 
 	GoogleProjectId string
 
@@ -55,10 +59,26 @@ var Common = &CommonConfig{
 		WithRequired().
 		GetBool(),
 
+	MetricExportInterval: config.NewEnv("SE_GA_METRIC_EXPORT_INTERVAL").
+		WithDefault("10s").
+		WithRequired().
+		GetDuration(),
+
 	EnableTraceCollection: config.NewEnv("SE_GA_ENABLE_TRACE_COLLECTION").
 		WithDefault("true").
 		WithRequired().
 		GetBool(),
+
+	TraceSampler: config.NewEnv("SE_GA_TRACE_SAMPLER").
+		WithDefault("always").
+		WithOptions("always", "never", "traceIdRatio").
+		WithRequired().
+		GetString(),
+
+	TraceIdRatio: config.NewEnv("SE_GA_TRACE_ID_RATIO").
+		WithDefault("0.01").
+		WithRequired().
+		GetFloat64(),
 
 	GoogleProjectId: config.NewEnv("SE_GA_PROJECT_ID").
 		WithDefault("gravity-assist").

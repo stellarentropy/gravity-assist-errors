@@ -3,7 +3,6 @@ package tracer
 import (
 	"context"
 	"sync"
-	"time"
 
 	config "github.com/stellarentropy/gravity-assist-common/config/common"
 
@@ -40,13 +39,25 @@ func StartTracer(ctx context.Context) (*sdktrace.TracerProvider, error) {
 		return nil, err
 	}
 
+	var traceSampler sdktrace.Sampler
+
+	switch config.Common.TraceSampler {
+	case "always":
+		traceSampler = sdktrace.AlwaysSample()
+	case "never":
+		traceSampler = sdktrace.NeverSample()
+	case "traceIdRatio":
+		traceSampler = sdktrace.TraceIDRatioBased(config.Common.TraceIdRatio)
+	}
+
 	tp := sdktrace.NewTracerProvider(
-		sdktrace.WithSampler(sdktrace.AlwaysSample()),
+		sdktrace.WithSampler(traceSampler),
 		sdktrace.WithBatcher(gcpTraceExporter),
 		sdktrace.WithResource(res),
 	)
 
-	metricReader := sdkmetric.NewPeriodicReader(gcpMetricExporter, sdkmetric.WithInterval(10*time.Second))
+	metricReader := sdkmetric.NewPeriodicReader(gcpMetricExporter,
+		sdkmetric.WithInterval(config.Common.MetricExportInterval))
 
 	mp := sdkmetric.NewMeterProvider(
 		sdkmetric.WithReader(metricReader),

@@ -121,6 +121,19 @@ func (e Env) GetInt() int {
 	return i
 }
 
+func (e Env) GetFloat64() float64 {
+	if e.value == "" {
+		return 0
+	}
+
+	i, err := strconv.ParseFloat(e.value, 64)
+	if err != nil {
+		panic(err)
+	}
+
+	return i
+}
+
 func (e Env) GetDirectoryOrCreate() string {
 	if e.value == "" {
 		return e.value
