@@ -34,17 +34,18 @@ func AddInt64(ctx context.Context, component string, name string, value int64, o
 	m := NewMetric(ctx, component)
 
 	countersLock.Lock()
-	defer countersLock.Unlock()
 
 	c, ok := counters[name]
 	if !ok {
 		counter, err := m.Int64Counter(name)
 		if err != nil {
+			countersLock.Unlock()
 			return err
 		}
 		counters[name] = counter
 		c = counter
 	}
+	countersLock.Unlock()
 
 	c.Add(ctx, value, opts...)
 
