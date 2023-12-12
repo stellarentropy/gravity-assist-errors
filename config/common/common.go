@@ -15,6 +15,9 @@ import (
 type CommonConfig struct {
 	ServiceName string
 
+	EnableMetricCollection bool
+	EnableTraceCollection  bool
+
 	GoogleProjectId string
 
 	DebugListenAddress string
@@ -46,6 +49,16 @@ var Common = &CommonConfig{
 		WithDefault("gravity-assist-common").
 		WithRequired().
 		GetString(),
+
+	EnableMetricCollection: config.NewEnv("SE_GA_ENABLE_METRIC_COLLECTION").
+		WithDefault("true").
+		WithRequired().
+		GetBool(),
+
+	EnableTraceCollection: config.NewEnv("SE_GA_ENABLE_TRACE_COLLECTION").
+		WithDefault("true").
+		WithRequired().
+		GetBool(),
 
 	GoogleProjectId: config.NewEnv("SE_GA_PROJECT_ID").
 		WithDefault("gravity-assist").

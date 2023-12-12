@@ -4,6 +4,7 @@ import (
 	"context"
 	"sync"
 
+	config "github.com/stellarentropy/gravity-assist-common/config/common"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/metric"
 )
@@ -31,6 +32,10 @@ func NewMetric(ctx context.Context, component string, opts ...metric.MeterOption
 }
 
 func AddInt64(ctx context.Context, component string, name string, value int64, opts ...metric.AddOption) error {
+	if !config.Common.EnableMetricCollection {
+		return nil
+	}
+
 	m := NewMetric(ctx, component)
 
 	countersLock.Lock()
